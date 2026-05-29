@@ -99,14 +99,19 @@ export default function OrderDashboard() {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(12);
 
-        const billingLines = [
-            successInfo.name,
-            successInfo.phone,
-            ...doc.splitTextToSize(successInfo.address, 380),
-        ];
-        doc.text(billingLines, 40, 270, { maxWidth: 380, align: 'left' });
+        const addressLines = successInfo.address
+            .split(/\r?\n/)
+            .flatMap((line) => doc.splitTextToSize(line, 380));
+        const billingLines = [successInfo.name, successInfo.phone, ...addressLines];
 
-        const tableTop = 360;
+        let currentY = 270;
+        const lineHeight = 14;
+        billingLines.forEach((line) => {
+            doc.text(line, 40, currentY);
+            currentY += lineHeight;
+        });
+
+        const tableTop = currentY + 20;
         doc.setDrawColor(160);
         doc.setLineWidth(0.7);
         doc.rect(40, tableTop, pageWidth - 80, 80);
@@ -118,14 +123,14 @@ export default function OrderDashboard() {
 
         doc.setFont('helvetica', 'normal');
         doc.text('Courier Order Booking', 50, tableTop + 42);
-        doc.text(`৳${successInfo.amount}`, pageWidth - 110, tableTop + 42, { align: 'right' });
+        doc.text(`Tk ${successInfo.amount}`, pageWidth - 110, tableTop + 42, { align: 'right' });
 
         doc.setLineWidth(0.5);
         doc.line(40, tableTop + 56, pageWidth - 40, tableTop + 56);
 
         doc.setFont('helvetica', 'bold');
         doc.text('Total', 50, tableTop + 75);
-        doc.text(`৳${successInfo.amount}`, pageWidth - 110, tableTop + 75, { align: 'right' });
+        doc.text(`Tk ${successInfo.amount}`, pageWidth - 110, tableTop + 75, { align: 'right' });
 
         doc.setFontSize(11);
         doc.setFont('helvetica', 'normal');
