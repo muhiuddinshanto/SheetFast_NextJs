@@ -70,6 +70,7 @@ export default async function handler(req, res) {
         return res.status(200).json({
             status: 'success',
             tracking: trackingCode,
+            invoice: invoiceNumber,
         });
     } catch (error) {
         return res.status(500).json({
