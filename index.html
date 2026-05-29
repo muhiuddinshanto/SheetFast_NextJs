@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superfast Order Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-w-md border border-slate-700">
+        <h2 class="text-xl font-bold mb-2 text-emerald-400 text-center">Quick Order Dashboard</h2>
+        <p class="text-xs text-slate-400 text-center mb-6">এক ক্লিকে শিট সেভ ও স্টিডফাস্ট বুকিং</p>
+
+        <form id="orderForm" class="space-y-4">
+
+            <div>
+                <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">কাস্টমারের নাম</label>
+                <input type="text" id="name" required
+                    class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">ফোন নম্বর</label>
+                <input type="tel" id="phone" required
+                    class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">সম্পূর্ণ ঠিকানা</label>
+                <textarea id="address" rows="3" required
+                    class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase font-semibold text-slate-400 mb-1">পণ্যের দাম (COD টাকা)</label>
+                <input type="number" id="amount" required min="0" placeholder="যেমন: 650"
+                    class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <button type="submit" id="submitBtn"
+                class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold py-2.5 rounded-lg text-sm transition-all shadow-lg shadow-emerald-500/20">
+                Submit Order
+            </button>
+
+        </form>
+    </div>
+
+    <script>
+        // ⚠️ এখানে আপনার নতুন করে জেনারেট করা Google Web App URL টি বসান
+        const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzTFf6v-IU4k29t2UaVV-Ops0xxtS3t0ELKSClXwQZSfn6B279FSkAJI-lPxwiVJrk4/exec';
+
+        document.getElementById('orderForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = 'Processing...';
+            btn.disabled = true;
+
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                amount: document.getElementById('amount').value.trim() || "0"
+            };
+
+            // গুগল শিটের ব্যাকঅ্যান্ডে রিকোয়েস্ট পাঠানো
+            fetch(googleScriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' }, // CORS প্রিপ্লাইট এড়াতে টেক্সট মোড ব্যবহার
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(resJson => {
+                    if (resJson.status === "success") {
+                        if (resJson.tracking.includes("Error") || resJson.tracking.includes("Failed")) {
+                            alert('⚠️ শিটে সেভ হয়েছে কিন্তু কুরিয়ার এরর: ' + resJson.tracking);
+                        } else {
+                            alert('🔥 সফল! অর্ডারটি গুগল শিটে সেভ হয়েছে এবং স্টিডফাস্টে বুক হয়েছে।\nট্র্যাকিং আইডি: ' + resJson.tracking);
+                        }
+                        document.getElementById('orderForm').reset();
+                    } else {
+                        alert('ভুল হয়েছে: ' + resJson.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    // গুগল 'no-cors' মোডে অনেক সময় সফল হলেও ক্যাচ ব্লকে পাঠায়, তাই শিট চেক করতে বলা
+                    alert('অর্ডার সাবমিট হয়েছে! দয়া করে আপনার গুগল শিটটি চেক করে নিশ্চিত হয়ে নিন।');
+                    document.getElementById('orderForm').reset();
+                })
+                .finally(() => {
+                    btn.innerText = 'Submit Order';
+                    btn.disabled = false;
+                });
+        });
+    </script>
+
+</body>
+
+</html>

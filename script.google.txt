@@ -1,0 +1,33 @@
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+
+    var name    = data.name    ? data.name.toString().trim()    : "";
+    var phone   = data.phone   ? data.phone.toString().trim()   : "";
+    var address = data.address ? data.address.toString().trim() : "";
+    var amount  = data.amount  ? data.amount.toString().trim()  : "0";
+    var tracking = data.tracking ? data.tracking.toString() : "";
+
+    var ss    = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Sheet1") || ss.getSheets()[0];
+
+    // Only append to the sheet. Do NOT call external courier APIs here to avoid duplicate bookings.
+    sheet.appendRow([
+      new Date(),
+      name,
+      phone,
+      address,
+      amount,
+      tracking
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "success", tracking: tracking }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch(error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}

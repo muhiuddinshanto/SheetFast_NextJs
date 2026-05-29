@@ -1,0 +1,21 @@
+{
+  "name": "sheetfast-nextjs",
+  "version": "1.0.0",
+  "description": "Quick Order Dashboard - Sheet Save & Steadfast Booking",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.6"
+  }
+}
