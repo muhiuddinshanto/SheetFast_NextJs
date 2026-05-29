@@ -149,7 +149,4 @@ npm install
 
 ---
 
-### নোট
-
-এই README ফাইলটি `Next.js` ভার্সনের জন্য আপডেট করা হয়েছে। পুরাতন `index.html` ও `appsscript.gs` ভার্সন না থাকলে, মূলভাবে `pages/index.jsx` ও `pages/api/submit-order.js` থেকে কাজ হবে।
 
